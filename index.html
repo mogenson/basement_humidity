@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Basement Humidity</title>
+    <!-- EXTERNAL LIBS-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://www.google.com/jsapi"></script>
+
+    <!-- EXAMPLE SCRIPT -->
+    <script>
+
+      // onload callback
+      function drawChart() {
+
+        var cloud_url = 'https://data.sparkfun.com/output/';
+        // Public Key from https://data.sparkfun.com
+        var public_key = 'YGnjwvlZYqToya7DJGLp';
+
+        // JSONP request
+        var jsonData = $.ajax({
+          url:  cloud_url + public_key + '.json',
+          data: {page: 1},
+          dataType: 'jsonp',
+        }).done(function (results) {
+
+          var humidity_data = new google.visualization.DataTable();
+
+          humidity_data.addColumn('datetime', 'Time');
+          humidity_data.addColumn('number', 'Humidity');
+
+          $.each(results, function (i, row) {
+            humidity_data.addRow([
+              (new Date(row.timestamp)),
+              parseFloat(row.humidity),
+            ]);
+          });
+
+          var chart = new google.visualization.LineChart($('#humidity_chart').get(0));
+          chart.draw(humidity_data, {
+            title: 'Log of humidity (percent humidity)'
+          });
+
+          var temp_data = new google.visualization.DataTable();
+
+          temp_data.addColumn('datetime', 'Time');
+          temp_data.addColumn('number', 'Tempature');
+          temp_data.addColumn('number', 'Heat Index');
+
+          $.each(results, function (i, row) {
+            temp_data.addRow([
+              (new Date(row.timestamp)),
+              parseFloat(row.temperature),
+              parseFloat(row.heat_index)
+            ]);
+          });
+
+          var chart = new google.visualization.LineChart($('#temperature_chart').get(0));
+          chart.draw(temp_data, {
+            title: 'Lof of temperature (degrees Fahrenheit)'
+          });
+
+        });
+      }
+
+      // load chart lib
+      google.load('visualization', '1', {
+        packages: ['corechart']
+      });
+
+      // call drawChart once google charts is loaded
+      google.setOnLoadCallback(drawChart);
+    </script>
+
+  </head>
+  <body style="text-align:center">
+    <h1 >The humidity in Mike's basement</h1>
+    <h4>Measured with a DHT11</h4>
+    <h4>Transmitted with an ESP8266</h4>
+    <h4>Logged at <a href="https://data.sparkfun.com/streams/YGnjwvlZYqToya7DJGLp">data.sparkfun.com</a></h4>
+    <div id="humidity_chart" style="width: 100%;"></div>
+    <div id="temperature_chart" style="width: 100%;"></div>
+  </body>
+</html>
