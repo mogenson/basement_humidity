@@ -31,32 +31,32 @@
           $.each(results, function (i, row) {
             humidity_data.addRow([
               (new Date(row.timestamp)),
-              parseFloat(row.humidity),
+              parseFloat(row.humidity/1000.0),
             ]);
           });
 
           var chart = new google.visualization.LineChart($('#humidity_chart').get(0));
           chart.draw(humidity_data, {
-            title: 'Log of humidity (percent humidity)'
+            title: 'Humidity (percent humidity)',
+            legend: 'none'
           });
 
           var temp_data = new google.visualization.DataTable();
 
           temp_data.addColumn('datetime', 'Time');
-          temp_data.addColumn('number', 'Tempature');
-          temp_data.addColumn('number', 'Heat Index');
+          temp_data.addColumn('number', 'Temperature');
 
           $.each(results, function (i, row) {
             temp_data.addRow([
               (new Date(row.timestamp)),
-              parseFloat(row.temperature),
-              parseFloat(row.heat_index)
+              parseFloat(row.temperature/1000.0),
             ]);
           });
 
           var chart = new google.visualization.LineChart($('#temperature_chart').get(0));
           chart.draw(temp_data, {
-            title: 'Lof of temperature (degrees Fahrenheit)'
+            title: 'Temperature (degrees Celsius)',
+            legend: 'none'
           });
 
         });
@@ -74,10 +74,12 @@
   </head>
   <body style="text-align:center">
     <h1 >The humidity in Mike's basement</h1>
-    <h4>Measured with a DHT11</h4>
-    <h4>Transmitted with an ESP8266</h4>
+    <h4>Measured with a DHT22</h4>
+    <h4>Transmitted with an Olinuxino Nano</h4>
     <h4>Logged at <a href="https://data.sparkfun.com/streams/YGnjwvlZYqToya7DJGLp">data.sparkfun.com</a></h4>
-    <div id="humidity_chart" style="width: 100%;"></div>
-    <div id="temperature_chart" style="width: 100%;"></div>
+    <div id="header" style="margin: 0 auto; width:800px">
+        <div id="humidity_chart"></div>
+        <div id="temperature_chart"></div>
+    <div>
   </body>
 </html>
