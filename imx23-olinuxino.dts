@@ -1,0 +1,614 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <0x1>;
+	#size-cells = <0x1>;
+	interrupt-parent = <0x1>;
+	model = "i.MX23 Olinuxino Low Cost Board";
+	compatible = "olimex,imx23-olinuxino", "fsl,imx23";
+
+	chosen {
+	};
+
+	aliases {
+		gpio0 = "/apb@80000000/apbh@80000000/pinctrl@80018000/gpio@0";
+		gpio1 = "/apb@80000000/apbh@80000000/pinctrl@80018000/gpio@1";
+		gpio2 = "/apb@80000000/apbh@80000000/pinctrl@80018000/gpio@2";
+		serial0 = "/apb@80000000/apbx@80040000/serial@8006c000";
+		serial1 = "/apb@80000000/apbx@80040000/serial@8006e000";
+		spi0 = "/apb@80000000/apbh@80000000/ssp@80010000";
+		spi1 = "/apb@80000000/apbh@80000000/ssp@80034000";
+		usbphy0 = "/apb@80000000/apbx@80040000/usbphy@8007c000";
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x40000000 0x4000000>;
+	};
+
+	cpus {
+		#address-cells = <0x0>;
+		#size-cells = <0x0>;
+
+		cpu {
+			compatible = "arm,arm926ej-s";
+			device_type = "cpu";
+		};
+	};
+
+	apb@80000000 {
+		compatible = "simple-bus";
+		#address-cells = <0x1>;
+		#size-cells = <0x1>;
+		reg = <0x80000000 0x80000>;
+		ranges;
+
+		apbh@80000000 {
+			compatible = "simple-bus";
+			#address-cells = <0x1>;
+			#size-cells = <0x1>;
+			reg = <0x80000000 0x40000>;
+			ranges;
+
+			interrupt-controller@80000000 {
+				compatible = "fsl,imx23-icoll", "fsl,icoll";
+				interrupt-controller;
+				#interrupt-cells = <0x1>;
+				reg = <0x80000000 0x2000>;
+				linux,phandle = <0x1>;
+				phandle = <0x1>;
+			};
+
+			dma-apbh@80004000 {
+				compatible = "fsl,imx23-dma-apbh";
+				reg = <0x80004000 0x2000>;
+				interrupts = <0x0 0xe 0x14 0x0 0xd 0xd 0xd 0xd>;
+				interrupt-names = "empty", "ssp0", "ssp1", "empty", "gpmi0", "gpmi1", "gpmi2", "gpmi3";
+				#dma-cells = <0x1>;
+				dma-channels = <0x8>;
+				clocks = <0x2 0xf>;
+				linux,phandle = <0x3>;
+				phandle = <0x3>;
+			};
+
+			ecc@80008000 {
+				reg = <0x80008000 0x2000>;
+				status = "disabled";
+			};
+
+			gpmi-nand@8000c000 {
+				compatible = "fsl,imx23-gpmi-nand";
+				#address-cells = <0x1>;
+				#size-cells = <0x1>;
+				reg = <0x8000c000 0x2000 0x8000a000 0x2000>;
+				reg-names = "gpmi-nand", "bch";
+				interrupts = <0x38>;
+				interrupt-names = "bch";
+				clocks = <0x2 0x22>;
+				clock-names = "gpmi_io";
+				dmas = <0x3 0x4>;
+				dma-names = "rx-tx";
+				status = "disabled";
+			};
+
+			ssp@80010000 {
+				reg = <0x80010000 0x2000>;
+				interrupts = <0xf>;
+				clocks = <0x2 0x21>;
+				dmas = <0x3 0x1>;
+				dma-names = "rx-tx";
+				status = "okay";
+				compatible = "fsl,imx23-mmc";
+				pinctrl-names = "default";
+				pinctrl-0 = <0x4 0x5>;
+				bus-width = <0x4>;
+				broken-cd;
+			};
+
+			etm@80014000 {
+				reg = <0x80014000 0x2000>;
+				status = "disabled";
+			};
+
+			pinctrl@80018000 {
+				#address-cells = <0x1>;
+				#size-cells = <0x0>;
+				compatible = "fsl,imx23-pinctrl", "simple-bus";
+				reg = <0x80018000 0x2000>;
+				pinctrl-names = "default";
+				pinctrl-0 = <0x6>;
+
+				gpio@0 {
+					compatible = "fsl,imx23-gpio", "fsl,mxs-gpio";
+					interrupts = <0x10>;
+					gpio-controller;
+					#gpio-cells = <0x2>;
+					interrupt-controller;
+					#interrupt-cells = <0x2>;
+					linux,phandle = <0x11>;
+					phandle = <0x11>;
+				};
+
+				gpio@1 {
+					compatible = "fsl,imx23-gpio", "fsl,mxs-gpio";
+					interrupts = <0x11>;
+					gpio-controller;
+					#gpio-cells = <0x2>;
+					interrupt-controller;
+					#interrupt-cells = <0x2>;
+				};
+
+				gpio@2 {
+					compatible = "fsl,imx23-gpio", "fsl,mxs-gpio";
+					interrupts = <0x12>;
+					gpio-controller;
+					#gpio-cells = <0x2>;
+					interrupt-controller;
+					#interrupt-cells = <0x2>;
+					linux,phandle = <0x13>;
+					phandle = <0x13>;
+				};
+
+				duart@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x11a2 0x11b2>;
+					fsl,drive-strength = <0x0>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x0>;
+					linux,phandle = <0xd>;
+					phandle = <0xd>;
+				};
+
+				auart0@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x1c0 0x1d0 0x1a0 0x1b0>;
+					fsl,drive-strength = <0x0>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x0>;
+				};
+
+				auart0-2pins@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x1e2 0x1f2>;
+					fsl,drive-strength = <0x0>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x0>;
+					linux,phandle = <0xc>;
+					phandle = <0xc>;
+				};
+
+				gpmi-nand@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x0 0x10 0x20 0x30 0x40 0x50 0x60 0x70 0x100 0x110 0x130 0x140 0x170 0x180 0x190 0x21b0 0x21c0>;
+					fsl,drive-strength = <0x0>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x0>;
+				};
+
+				gpmi-pins-fixup {
+					fsl,pinmux-ids = <0x170 0x180 0x190>;
+					fsl,drive-strength = <0x2>;
+				};
+
+				mmc0-4bit@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x2020 0x2030 0x2040 0x2050 0x2000 0x2060>;
+					fsl,drive-strength = <0x1>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x1>;
+					linux,phandle = <0x4>;
+					phandle = <0x4>;
+				};
+
+				mmc0-8bit@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x2020 0x2030 0x2040 0x2050 0x82 0x92 0xa2 0xb2 0x2000 0x2010 0x2060>;
+					fsl,drive-strength = <0x1>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x1>;
+				};
+
+				mmc0-pins-fixup {
+					fsl,pinmux-ids = <0x2010 0x2060>;
+					fsl,pull-up = <0x0>;
+					linux,phandle = <0x5>;
+					phandle = <0x5>;
+				};
+
+				pwm2@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x11c0>;
+					fsl,drive-strength = <0x0>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x0>;
+				};
+
+				lcdif-24bit@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x1000 0x1010 0x1020 0x1030 0x1040 0x1050 0x1060 0x1070 0x1080 0x1090 0x10a0 0x10b0 0x10c0 0x10d0 0x10e0 0x10f0 0x1100 0x1110 0x81 0x91 0xa1 0xb1 0xc1 0xd1 0x1160 0x1170 0x1180 0x1190>;
+					fsl,drive-strength = <0x0>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x0>;
+				};
+
+				spi2@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x182 0x142 0x2 0x32>;
+					fsl,drive-strength = <0x1>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x1>;
+					linux,phandle = <0x7>;
+					phandle = <0x7>;
+				};
+
+				i2c@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x1e0 0x1f0>;
+					fsl,drive-strength = <0x1>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x1>;
+				};
+
+				i2c@1 {
+					reg = <0x1>;
+					fsl,pinmux-ids = <0x1171 0x1181>;
+					fsl,drive-strength = <0x1>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x1>;
+					linux,phandle = <0xb>;
+					phandle = <0xb>;
+				};
+
+				i2c@2 {
+					reg = <0x2>;
+					fsl,pinmux-ids = <0x2031 0x2041>;
+					fsl,drive-strength = <0x1>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x1>;
+				};
+
+				hog@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x113>;
+					fsl,drive-strength = <0x0>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x0>;
+					linux,phandle = <0x6>;
+					phandle = <0x6>;
+				};
+
+				led_gpio2_1@0 {
+					reg = <0x0>;
+					fsl,pinmux-ids = <0x2013>;
+					fsl,drive-strength = <0x0>;
+					fsl,voltage = <0x1>;
+					fsl,pull-up = <0x0>;
+					linux,phandle = <0x12>;
+					phandle = <0x12>;
+				};
+			};
+
+			digctl@8001c000 {
+				compatible = "fsl,imx23-digctl";
+				reg = <0x8001c000 0x7d0>;
+				status = "disabled";
+			};
+
+			emi@80020000 {
+				reg = <0x80020000 0x2000>;
+				status = "disabled";
+			};
+
+			dma-apbx@80024000 {
+				compatible = "fsl,imx23-dma-apbx";
+				reg = <0x80024000 0x2000>;
+				interrupts = <0x7 0x5 0x9 0x1a 0x13 0x0 0x19 0x17 0x3c 0x3a 0x9 0x0 0x0 0x0 0x0 0x0>;
+				interrupt-names = "audio-adc", "audio-dac", "spdif-tx", "i2c", "saif0", "empty", "auart0-rx", "auart0-tx", "auart1-rx", "auart1-tx", "saif1", "empty", "empty", "empty", "empty", "empty";
+				#dma-cells = <0x1>;
+				dma-channels = <0x10>;
+				clocks = <0x2 0x10>;
+				linux,phandle = <0x8>;
+				phandle = <0x8>;
+			};
+
+			dcp@80028000 {
+				compatible = "fsl,imx23-dcp";
+				reg = <0x80028000 0x2000>;
+				interrupts = <0x35 0x36>;
+				status = "okay";
+			};
+
+			pxp@8002a000 {
+				reg = <0x8002a000 0x2000>;
+				status = "disabled";
+			};
+
+			ocotp@8002c000 {
+				compatible = "fsl,imx23-ocotp", "fsl,ocotp";
+				#address-cells = <0x1>;
+				#size-cells = <0x1>;
+				reg = <0x8002c000 0x2000>;
+				clocks = <0x2 0xf>;
+			};
+
+			axi-ahb@8002e000 {
+				reg = <0x8002e000 0x2000>;
+				status = "disabled";
+			};
+
+			lcdif@80030000 {
+				compatible = "fsl,imx23-lcdif";
+				reg = <0x80030000 0x7d0>;
+				interrupts = <0x2e 0x2d>;
+				clocks = <0x2 0x26>;
+				status = "disabled";
+			};
+
+			ssp@80034000 {
+				reg = <0x80034000 0x2000>;
+				interrupts = <0x2>;
+				clocks = <0x2 0x21>;
+				dmas = <0x3 0x2>;
+				dma-names = "rx-tx";
+				status = "okay";
+				#address-cells = <0x1>;
+				#size-cells = <0x0>;
+				compatible = "fsl,imx23-spi";
+				pinctrl-names = "default";
+				pinctrl-0 = <0x7>;
+			};
+
+			tvenc@80038000 {
+				reg = <0x80038000 0x2000>;
+				status = "disabled";
+			};
+		};
+
+		apbx@80040000 {
+			compatible = "simple-bus";
+			#address-cells = <0x1>;
+			#size-cells = <0x1>;
+			reg = <0x80040000 0x40000>;
+			ranges;
+
+			clkctrl@80040000 {
+				compatible = "fsl,imx23-clkctrl", "fsl,clkctrl";
+				reg = <0x80040000 0x2000>;
+				#clock-cells = <0x1>;
+				linux,phandle = <0x2>;
+				phandle = <0x2>;
+			};
+
+			saif@80042000 {
+				reg = <0x80042000 0x2000>;
+				dmas = <0x8 0x4>;
+				dma-names = "rx-tx";
+				status = "disabled";
+			};
+
+			power@80044000 {
+				compatible = "fsl,imx23-power", "syscon";
+				reg = <0x80044000 0x2000>;
+				interrupts = <0x3>;
+
+				regulator@1 {
+					compatible = "fsl,imx23-dcdc";
+					regulator-name = "dcdc";
+					regulator-boot-on;
+					regulator-always-on;
+				};
+
+				regulator@2 {
+					compatible = "fsl,imx23-vddd";
+					regulator-name = "vddd";
+					regulator-min-microvolt = <0x149970>;
+					regulator-max-microvolt = <0x17a6b0>;
+					vddd-supply = <0x9>;
+					regulator-boot-on;
+					regulator-always-on;
+				};
+
+				regulator@3 {
+					compatible = "fsl,imx23-vdda";
+					regulator-name = "vdda";
+					regulator-min-microvolt = <0x1a5248>;
+					regulator-max-microvolt = <0x1dc130>;
+					vdda-supply = <0xa>;
+					regulator-boot-on;
+					regulator-always-on;
+					linux,phandle = <0x9>;
+					phandle = <0x9>;
+				};
+
+				regulator@4 {
+					compatible = "fsl,imx23-vddio";
+					regulator-name = "vddio";
+					regulator-min-microvolt = <0x2dc6c0>;
+					regulator-max-microvolt = <0x368cd8>;
+					regulator-microvolt-offset = <0x13880>;
+					regulator-boot-on;
+					regulator-always-on;
+					linux,phandle = <0xa>;
+					phandle = <0xa>;
+				};
+			};
+
+			saif@80046000 {
+				reg = <0x80046000 0x2000>;
+				dmas = <0x8 0xa>;
+				dma-names = "rx-tx";
+				status = "disabled";
+			};
+
+			audio-out@80048000 {
+				reg = <0x80048000 0x2000>;
+				dmas = <0x8 0x1>;
+				dma-names = "tx";
+				status = "disabled";
+			};
+
+			audio-in@8004c000 {
+				reg = <0x8004c000 0x2000>;
+				dmas = <0x8 0x0>;
+				dma-names = "rx";
+				status = "disabled";
+			};
+
+			lradc@80050000 {
+				compatible = "fsl,imx23-lradc";
+				reg = <0x80050000 0x2000>;
+				interrupts = <0x24 0x25 0x26 0x27 0x28 0x29 0x2a 0x2b 0x2c>;
+				status = "okay";
+				clocks = <0x2 0x1a>;
+				#io-channel-cells = <0x1>;
+				linux,phandle = <0x10>;
+				phandle = <0x10>;
+			};
+
+			spdif@80054000 {
+				reg = <0x80054000 0x7d0>;
+				dmas = <0x8 0x2>;
+				dma-names = "tx";
+				status = "disabled";
+			};
+
+			i2c@80058000 {
+				#address-cells = <0x1>;
+				#size-cells = <0x0>;
+				compatible = "fsl,imx23-i2c";
+				reg = <0x80058000 0x2000>;
+				interrupts = <0x1b>;
+				clock-frequency = <0x186a0>;
+				dmas = <0x8 0x3>;
+				dma-names = "rx-tx";
+				status = "okay";
+				pinctrl-names = "default";
+				pinctrl-0 = <0xb>;
+			};
+
+			rtc@8005c000 {
+				compatible = "fsl,imx23-rtc", "fsl,stmp3xxx-rtc";
+				reg = <0x8005c000 0x2000>;
+				interrupts = <0x16>;
+			};
+
+			pwm@80064000 {
+				compatible = "fsl,imx23-pwm";
+				reg = <0x80064000 0x2000>;
+				clocks = <0x2 0x1e>;
+				#pwm-cells = <0x2>;
+				fsl,pwm-number = <0x5>;
+				status = "disabled";
+			};
+
+			timrot@80068000 {
+				compatible = "fsl,imx23-timrot", "fsl,timrot";
+				reg = <0x80068000 0x2000>;
+				interrupts = <0x1c 0x1d 0x1e 0x1f>;
+				clocks = <0x2 0x1c>;
+			};
+
+			serial@8006c000 {
+				compatible = "fsl,imx23-auart";
+				reg = <0x8006c000 0x2000>;
+				interrupts = <0x18>;
+				clocks = <0x2 0x20>;
+				dmas = <0x8 0x6 0x8 0x7>;
+				dma-names = "rx", "tx";
+				status = "okay";
+				pinctrl-names = "default";
+				pinctrl-0 = <0xc>;
+			};
+
+			serial@8006e000 {
+				compatible = "fsl,imx23-auart";
+				reg = <0x8006e000 0x2000>;
+				interrupts = <0x3b>;
+				clocks = <0x2 0x20>;
+				dmas = <0x8 0x8 0x8 0x9>;
+				dma-names = "rx", "tx";
+				status = "disabled";
+			};
+
+			serial@80070000 {
+				compatible = "arm,pl011", "arm,primecell";
+				reg = <0x80070000 0x2000>;
+				interrupts = <0x0>;
+				clocks = <0x2 0x20 0x2 0x10>;
+				clock-names = "uart", "apb_pclk";
+				status = "okay";
+				pinctrl-names = "default";
+				pinctrl-0 = <0xd>;
+			};
+
+			usbphy@8007c000 {
+				compatible = "fsl,imx23-usbphy";
+				reg = <0x8007c000 0x2000>;
+				clocks = <0x2 0x29>;
+				status = "okay";
+				linux,phandle = <0xe>;
+				phandle = <0xe>;
+			};
+		};
+	};
+
+	ahb@80080000 {
+		compatible = "simple-bus";
+		#address-cells = <0x1>;
+		#size-cells = <0x1>;
+		reg = <0x80080000 0x80000>;
+		ranges;
+
+		usb@80080000 {
+			compatible = "fsl,imx23-usb", "fsl,imx27-usb";
+			reg = <0x80080000 0x40000>;
+			interrupts = <0xb>;
+			fsl,usbphy = <0xe>;
+			clocks = <0x2 0x28>;
+			status = "okay";
+			dr_mode = "host";
+			vbus-supply = <0xf>;
+		};
+	};
+
+	iio_hwmon {
+		compatible = "iio-hwmon";
+		io-channels = <0x10 0x8>;
+	};
+
+	regulators {
+		compatible = "simple-bus";
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+
+		regulator@0 {
+			compatible = "regulator-fixed";
+			reg = <0x0>;
+			regulator-name = "usb0_vbus";
+			regulator-min-microvolt = <0x4c4b40>;
+			regulator-max-microvolt = <0x4c4b40>;
+			enable-active-high;
+			startup-delay-us = <0x12c>;
+			gpio = <0x11 0x11 0x0>;
+			linux,phandle = <0xf>;
+			phandle = <0xf>;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <0x12>;
+
+		user {
+			label = "green";
+			gpios = <0x13 0x1 0x0>;
+			linux,default-trigger = "heartbeat";
+		};
+	};
+
+	humidity_sensor {
+		compatible = "dht11";
+		gpios = <0x11 19 0>;
+	};
+};
