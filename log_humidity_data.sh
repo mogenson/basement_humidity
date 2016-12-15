@@ -1,10 +1,17 @@
 #!/bin/sh
 
-PHANT_PRIVATE_KEY=<copy private key here>
+PHANT_PRIVATE_KEY=<private key here>
 PHANT_PUBLIC_KEY=YGnjwvlZYqToya7DJGLp
 
+WIFI_NAME="<wifi name here>"
+WIFI_PASS="<wifi pass here>"
+
+# create a wpa_supplicant.conf configuration file
+printf "network={\n\tssid=\"%s\"\n\tpsk=\"%s\"\n}\n" \
+    "$WIFI_NAME" "$WIFI_PASS" > wpa_supplicant.conf
+
 # connect to WiFi start DHCP client
-wpa_supplicant -B -Dnl80211 -iwlan0 -c/etc/wpa_supplicant.conf
+wpa_supplicant -B -D nl80211 -i wlan0 -c wpa_supplicant.conf
 sleep 30
 dhcpcd wlan0
 sleep 1m
@@ -25,9 +32,9 @@ do
 
         # post data to data.sparkfun.com (don't require certificates)
         curl -k --header "Phant-Private-Key: $PHANT_PRIVATE_KEY" \
-             --data "humidity=$HUMIDITY" \
-             --data "temperature=$TEMPERATURE" \
-             "https://data.sparkfun.com/input/$PHANT_PUBLIC_KEY"
+                --data "humidity=$HUMIDITY" \
+                --data "temperature=$TEMPERATURE" \
+                "https://data.sparkfun.com/input/$PHANT_PUBLIC_KEY"
     fi
 
     # wait 15 minutes
