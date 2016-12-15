@@ -31,33 +31,39 @@
           $.each(results, function (i, row) {
             humidity_data.addRow([
               (new Date(row.timestamp)),
-              parseFloat(row.humidity/1000.0),
+              parseFloat(row.humidity * 0.001),
             ]);
           });
 
           var chart = new google.visualization.LineChart($('#humidity_chart').get(0));
-          chart.draw(humidity_data, {
-            title: 'Humidity (percent humidity)',
-            legend: 'none'
-          });
+          var options = {
+              title: "Humidity",
+              legend: 'none',
+              vAxis: {title: 'Percent'}
+          };
+          chart.draw(humidity_data, options);
 
           var temp_data = new google.visualization.DataTable();
 
           temp_data.addColumn('datetime', 'Time');
-          temp_data.addColumn('number', 'Temperature');
+          temp_data.addColumn('number', 'Celsius');
+          temp_data.addColumn('number', 'Fahrenheit');
 
           $.each(results, function (i, row) {
             temp_data.addRow([
               (new Date(row.timestamp)),
-              parseFloat(row.temperature/1000.0),
+              parseFloat(row.temperature * 0.001),
+              parseFloat(row.temperature * 0.0018 + 32)
             ]);
           });
 
           var chart = new google.visualization.LineChart($('#temperature_chart').get(0));
-          chart.draw(temp_data, {
-            title: 'Temperature (degrees Celsius)',
-            legend: 'none'
-          });
+          var options = {
+              title: "Temperature",
+              legend: {position: 'bottom'},
+              vAxis: {title: 'Degrees'}
+          };
+          chart.draw(temp_data, options);
 
         });
       }
@@ -74,8 +80,7 @@
   </head>
   <body style="text-align:center">
     <h1 >The humidity in Mike's basement</h1>
-    <h4>Measured with a DHT22</h4>
-    <h4>Transmitted with an Olinuxino Nano</h4>
+    <h4>Measured with a DHT22 and Olinuxino Nano</h4>
     <h4>Logged at <a href="https://data.sparkfun.com/streams/YGnjwvlZYqToya7DJGLp">data.sparkfun.com</a></h4>
     <div id="header" style="margin: 0 auto; width:800px">
         <div id="humidity_chart"></div>
