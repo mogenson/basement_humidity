@@ -37,6 +37,9 @@ do
                 "https://data.sparkfun.com/input/$PHANT_PUBLIC_KEY"
     fi
 
+    # print log message to dmesg
+    echo "$0: logged data at $(date)" > /dev/kmsg
+
     # wait 15 minutes
     sleep 15m
 
