@@ -39,7 +39,8 @@
           var options = {
               title: "Humidity",
               legend: 'none',
-              vAxis: {title: 'Percent'}
+              vAxis: {title: 'Percent'},
+              width: 700
           };
           chart.draw(humidity_data, options);
 
@@ -61,7 +62,8 @@
           var options = {
               title: "Temperature",
               legend: {position: 'bottom'},
-              vAxis: {title: 'Degrees'}
+              vAxis: {title: 'Degrees'},
+              width: 700
           };
           chart.draw(temp_data, options);
 
@@ -85,6 +87,6 @@
     <div id="header" style="margin: 0 auto; width:800px">
         <div id="humidity_chart"></div>
         <div id="temperature_chart"></div>
-    <div>
+    </div>
   </body>
 </html>
