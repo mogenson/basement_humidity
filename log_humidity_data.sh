@@ -6,6 +6,8 @@ PHANT_PUBLIC_KEY=YGnjwvlZYqToya7DJGLp
 WIFI_NAME="<wifi name here>"
 WIFI_PASS="<wifi pass here>"
 
+IFTTT_URL="https://maker.ifttt.com/trigger/basement_humidity/with/key/<IFTTT key here>/?value1="
+
 # create a wpa_supplicant.conf configuration file
 printf "network={\n\tssid=\"%s\"\n\tpsk=\"%s\"\n}\n" \
     "$WIFI_NAME" "$WIFI_PASS" > wpa_supplicant.conf
@@ -35,6 +37,12 @@ do
                 --data "humidity=$HUMIDITY" \
                 --data "temperature=$TEMPERATURE" \
                 "https://data.sparkfun.com/input/$PHANT_PUBLIC_KEY"
+                
+        # if humidity is over 50% send a notification through IFTTT.com
+        if [ "$HUMIDITY" -ge 50000 ]
+        then
+            curl -X POST "$IFTTT_URL$HUMIDITY"
+        fi
     fi
 
     # print log message to dmesg
